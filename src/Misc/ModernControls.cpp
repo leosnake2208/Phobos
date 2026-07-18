@@ -8,6 +8,7 @@
 #include <TacticalClass.h>
 #include <GeneralDefinitions.h>
 #include <Ext/Techno/Body.h>
+#include <Ext/TechnoType/Body.h>
 
 // Modern control scheme, Stage B1 - right mouse button issues the command.
 // (Mirror of the Vinifera "Feature B" work on Tiberian Sun.)
@@ -165,8 +166,10 @@ namespace ModernControls
 	static constexpr int SameTypeScreenRadius = 250;
 
 	// Add to the current selection every own, alive, selectable mobile unit that shares the
-	// TechnoType of the just-clicked unit (CurrentObjects[0]). wholeMap=false limits it to a
-	// SameTypeScreenRadius-px circle around the clicked unit.
+	// selection group of the just-clicked unit (CurrentObjects[0]) - reusing Phobos'
+	// GetSelectionGroupID / HasSelectionGroupID (the GroupAs tag with the type ID as
+	// fallback), so grouping stays consistent with the vanilla type-select hotkey.
+	// wholeMap=false limits it to a SameTypeScreenRadius-px circle around the clicked unit.
 	static void SelectSameType(bool wholeMap)
 	{
 		if (ObjectClass::CurrentObjects.Count < 1)
@@ -181,6 +184,8 @@ namespace ModernControls
 		if (!pType)
 			return;
 
+		const char* groupID = TechnoTypeExt::GetSelectionGroupID(pType);
+
 		Point2D center {};
 		if (!wholeMap)
 			center = TacticalClass::Instance->CoordsToClient(pClicked->GetCoords()).first;
@@ -190,7 +195,7 @@ namespace ModernControls
 			auto const pFoot = abstract_cast<FootClass*>(TechnoClass::Array.GetItem(i));
 			if (!pFoot || pFoot->IsSelected)
 				continue;
-			if (pFoot->Owner != pOwner || pFoot->GetTechnoType() != pType)
+			if (pFoot->Owner != pOwner || !TechnoTypeExt::HasSelectionGroupID(pFoot->GetTechnoType(), groupID))
 				continue;
 			if (!pFoot->IsAlive || pFoot->InLimbo || !pFoot->IsSelectable())
 				continue;
