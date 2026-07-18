@@ -38,6 +38,7 @@ bool Phobos::UI::AnchoredToolTips = false;
 bool Phobos::Config::ToolTipDescriptions = true;
 bool Phobos::Config::ToolTipBlur = false;
 bool Phobos::Config::PrioritySelectionFiltering = true;
+bool Phobos::Config::ModernControls = true;
 bool Phobos::Config::DevelopmentCommands = true;
 bool Phobos::Config::ShowPlanningPath = false;
 bool Phobos::Config::ArtImageSwap = false;
@@ -66,6 +67,7 @@ DEFINE_HOOK(0x5FACDF, OptionsClass_LoadSettings_LoadPhobosSettings, 0x5)
 	Phobos::Config::ToolTipDescriptions = CCINIClass::INI_RA2MD.ReadBool("Phobos", "ToolTipDescriptions", true);
 	Phobos::Config::ToolTipBlur = CCINIClass::INI_RA2MD.ReadBool("Phobos", "ToolTipBlur", false);
 	Phobos::Config::PrioritySelectionFiltering = CCINIClass::INI_RA2MD.ReadBool("Phobos", "PrioritySelectionFiltering", true);
+	Phobos::Config::ModernControls = CCINIClass::INI_RA2MD.ReadBool("Phobos", "ModernControls", true);
 	Phobos::Config::ShowPlacementPreview = CCINIClass::INI_RA2MD.ReadBool("Phobos", "ShowPlacementPreview", true);
 	Phobos::Config::RealTimeTimers = CCINIClass::INI_RA2MD.ReadBool("Phobos", "RealTimeTimers", false);
 	Phobos::Config::RealTimeTimers_Adaptive = CCINIClass::INI_RA2MD.ReadBool("Phobos", "RealTimeTimers.Adaptive", false);
