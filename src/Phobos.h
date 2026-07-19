@@ -74,7 +74,8 @@ public:
 		static bool ToolTipDescriptions;
 		static bool ToolTipBlur;
 		static bool PrioritySelectionFiltering;
-		static bool ModernControls;
+		static bool RightClickCommand;
+		static bool TypeSelectByMultiClick;
 		static bool DevelopmentCommands;
 		static bool ArtImageSwap;
 		static bool ShowPlacementPreview;

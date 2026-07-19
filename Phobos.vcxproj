@@ -154,7 +154,8 @@
     <ClCompile Include="src\Misc\Hooks.Blowfish.cpp" />
     <ClCompile Include="src\Misc\Selection.cpp" />
     <ClCompile Include="src\Misc\CameraPanWASD.cpp" />
-    <ClCompile Include="src\Misc\ModernControls.cpp" />
+    <ClCompile Include="src\Misc\RightClickCommand.cpp" />
+    <ClCompile Include="src\Misc\MultiClickTypeSelect.cpp" />
     <ClCompile Include="src\Utilities\Anchor.cpp" />
     <ClCompile Include="src\Utilities\Debug.cpp" />
     <ClCompile Include="src\Ext\BuildingType\Body.cpp" />
