@@ -38,19 +38,12 @@ namespace MultiClickTypeSelect
 	static constexpr int SameTypeScreenRadius = 250;
 
 	// Add to the current selection every own, alive, selectable mobile unit that shares the
-	// selection group of the just-clicked unit (CurrentObjects[0]) - reusing Phobos'
-	// GetSelectionGroupID / HasSelectionGroupID (the GroupAs tag with the type ID as
-	// fallback), so grouping stays consistent with the vanilla type-select hotkey.
+	// selection group of the clicked unit - reusing Phobos' GetSelectionGroupID /
+	// HasSelectionGroupID (the GroupAs tag with the type ID as fallback), so grouping stays
+	// consistent with the vanilla type-select hotkey.
 	// wholeMap=false limits it to a SameTypeScreenRadius-px circle around the clicked unit.
-	static void SelectSameType(bool wholeMap)
+	static void SelectSameType(FootClass* pClicked, bool wholeMap)
 	{
-		if (ObjectClass::CurrentObjects.Count < 1)
-			return;
-
-		auto const pClicked = abstract_cast<FootClass*>(ObjectClass::CurrentObjects.GetItem(0));
-		if (!pClicked)
-			return; // only mobile units get type-select
-
 		auto const pType = pClicked->GetTechnoType();
 		auto const pOwner = pClicked->Owner;
 		if (!pType)
@@ -101,6 +94,12 @@ DEFINE_HOOK(0x693290, TacticalMsgHandler_LButtonUp_MultiClickTypeSelect, 0x6)
 
 	if (Phobos::Config::TypeSelectByMultiClick)
 	{
+		// The object this click landed on, as ProcessClickCoords resolved it at 0x69325E - the
+		// same output slot the game hands to DecideAction and the applier. NOT CurrentObjects[0]:
+		// with several units selected that is not the clicked one (the bug TaranDahl caught
+		// upstream). Null on empty ground, so the cast must keep its null check.
+		auto const pClicked = abstract_cast<FootClass*>(R->Stack<ObjectClass*>(0x2C));
+
 		POINT pos { 0, 0 };
 		GetCursorPos(&pos);
 		const DWORD now = GetTickCount();
@@ -121,10 +120,13 @@ DEFINE_HOOK(0x693290, TacticalMsgHandler_LButtonUp_MultiClickTypeSelect, 0x6)
 		MultiClickTypeSelect::LastClickTick = now;
 		MultiClickTypeSelect::LastClickPos = pos;
 
+		if (!pClicked) // only mobile units drive type-select
+			return 0;
+
 		if (MultiClickTypeSelect::ClickStreak == 2)
-			MultiClickTypeSelect::SelectSameType(false); // same group near the clicked unit
+			MultiClickTypeSelect::SelectSameType(pClicked, false); // same group near the unit
 		else if (MultiClickTypeSelect::ClickStreak == 3)
-			MultiClickTypeSelect::SelectSameType(true);  // same group across the whole map
+			MultiClickTypeSelect::SelectSameType(pClicked, true);  // same group, whole map
 	}
 
 	return 0;
